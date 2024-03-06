@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: my_backend
+    tty: true
+    stdin_open: true
+    restart: always
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_USER: postgres
+      DB_PASSWORD: postgres_password123
+      DB_NAME: produtos
+      DB_HOST: db
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - api_net
+  db:
+    image: postgres:latest
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password123
+      POSTGRES_DB: produtos
+    restart: always  
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - api_net
+
+networks:
+  api_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
